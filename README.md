@@ -63,6 +63,5 @@ Here's a [link to my video result](https://github.com/chaidamu519/Udacity_SDC_Na
 
 ### Discussion
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
-
+In the test of video, when a complete intensity saturation on the left line is shown on the left image, the pipeline may fail. By using the average of several previous fitting parameters, this problem has been solved partially. I think a more dynamic thresholding process on the original image would make the model more robust.
   
