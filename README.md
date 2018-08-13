@@ -28,7 +28,7 @@ The Camera matrix and distortion coefficients are used for all the images and th
 
 ### 2.  Image calibration and then use color transforms, gradients, etc., to create a thresholded binary image.
 
-The final is a combination of binary thresholding the S channel of the HLS space and binary thresholding the result of applying the Sobel operator in the x direction on the original image. Red channel was also tested but the result becomes worse.
+The final is a combination of binary thresholding the S channel of the HLS space, the B channel (corresponds to blue-yellow) of the LAB space and binary thresholding the result of applying the Sobel operator in the x direction on the original image. The LAB increases significantly the clearness of the yellow lane lines.
 
 ![alt text](https://github.com/chaidamu519/Udacity_SDC_NanoDegree_Term1_Project4/blob/master/Image_undistort_and_colorGradient.png)
 
@@ -39,19 +39,23 @@ By using the lines from the two straght line images, a trapezoidal region is cho
 
 
 ### 4. Lane line fitting
+For the tested images, the seraching starts from the two highest peaks of the histogram, then using sliding windows to scan upward. The number of sliding windows (vertical), the width of the window margin (horizontal) as well as the minimum pixels needed to for window recenter are tuned as hyperparameters. Couting the active pixels in the window and compared with the hyperparameter  -- minimum pixels to recenter the window.
+
+After finding all the acvie pixels for lane lines, a 2nd order polynomial function is used to fit the pixels as the lane line for plotting and the calculation of radius.
+
 The approach of sliding windows is used to find the lane line pixels. Then a 2nd order polynomial function is used to fit the lane lines.
 ![alt text](https://github.com/chaidamu519/Udacity_SDC_NanoDegree_Term1_Project4/blob/master/polyfitting.png)
 
 
 ### 5. Radius measurement
 
-Then I calculate the radius of the left and right curvature of pixels and transformed them to the real radius in practice.
+Then I calculate the radius of the left and right curvature of pixels and transformed them to the real radius in practice. The distance between left and right lane lines are approximately 700 pixels, which is used to convert the pixel value to real values in meter.
 
 ![alt text](https://github.com/chaidamu519/Udacity_SDC_NanoDegree_Term1_Project4/blob/master/radius_calculation.png)
 
 
 #### 6. Wrap to the original images and draw lane lines
-In the end, the perspective images are wraped to the original images. The vehicule position is calculated by comparing the center of the lane line and the center of the image. 
+In the end, the perspective images are wraped to the original images. The vehicule position is calculated by comparing the center of the lane line and the center of the bottom line of the image. 
 
 ![alt text](https://github.com/chaidamu519/Udacity_SDC_NanoDegree_Term1_Project4/blob/master/test_on_images.png)
 
@@ -63,5 +67,6 @@ Here's a [link to my video result](https://github.com/chaidamu519/Udacity_SDC_Na
 
 ### Discussion
 
-In the test of video, when a complete intensity saturation on the left line is shown on the left image, the pipeline may fail. By using the average of several previous fitting parameters, this problem has been solved partially. I think a more dynamic thresholding process on the original image would make the model more robust.
+The first step of image calibration and then use color transforms, gradients, etc., to create a thresholded binary image seems to be the most important step for the whole pipeline. By utilizing the LAB space, the yellow lines become much more clear than without the binary output from B channel. 
+In reality, other more complicated or dynamic thresholding process may be used to make the model more robust.
   
